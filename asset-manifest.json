@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/TDLME/static/css/main.cb616390.css",
-    "main.js": "/TDLME/static/js/main.d0b98ebf.js",
+    "main.js": "/TDLME/static/js/main.8371553f.js",
     "static/js/787.2eed6660.chunk.js": "/TDLME/static/js/787.2eed6660.chunk.js",
     "static/media/roboto-all-500-normal.woff": "/TDLME/static/media/roboto-all-500-normal.0ab669b7a0d19b178f57.woff",
     "static/media/roboto-all-700-normal.woff": "/TDLME/static/media/roboto-all-700-normal.a457fde362a540fcadff.woff",
@@ -38,11 +38,11 @@
     "static/media/roboto-greek-ext-700-normal.woff2": "/TDLME/static/media/roboto-greek-ext-700-normal.bd9854c751441ccc1a70.woff2",
     "index.html": "/TDLME/index.html",
     "main.cb616390.css.map": "/TDLME/static/css/main.cb616390.css.map",
-    "main.d0b98ebf.js.map": "/TDLME/static/js/main.d0b98ebf.js.map",
+    "main.8371553f.js.map": "/TDLME/static/js/main.8371553f.js.map",
     "787.2eed6660.chunk.js.map": "/TDLME/static/js/787.2eed6660.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.cb616390.css",
-    "static/js/main.d0b98ebf.js"
+    "static/js/main.8371553f.js"
   ]
 }
