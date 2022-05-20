@@ -30,7 +30,7 @@ import { ListTwoTone } from '@mui/icons-material';
 
 class Prop extends React.Component {
   render() {
-    console.log(this.props);
+    //console.log(this.props);
     return (
       <ListItem sx={{
         bgcolor: "#2EAFA0",
@@ -66,7 +66,7 @@ class PropForm extends React.Component {
   }
 
   onSubmit(event) {
-    console.log("prop form", this.propName.current.value);
+    //console.log("prop form", this.propName.current.value);
     event.preventDefault();
     var newItemValue = this.propName.current.value;
 
@@ -106,12 +106,12 @@ class Props extends React.Component {
   }*/
 
   render() {
-    console.log(this.props);
+    //console.log(this.props);
     const title = 'Propositions';
 
     const props = this.props.props;
     const propsInfo = props.map((prop) => {return <Prop key={prop.id} value={prop} />});
-    console.log(propsInfo);
+    //console.log(propsInfo);
 
     return (
       <Box sx={{ width: '100%', maxWidth: 360, bgcolor: '#2a9d8f',
@@ -187,23 +187,25 @@ class State extends React.Component {
   renderWorld(world) {
     const worldOutput = [];
     for (let i = 0; i < world.counter; ++i) {
+      const correct = "#A7C957";
+      const wrong = "#D07C7D";
       const sx = {
         width: '1rem',
         borderTop: '0.4rem solid',
         borderBottom: '0.4rem solid',
-        borderTopColor: 'error.main',
-        borderBottomColor: 'error.main',
+        borderTopColor: wrong,
+        borderBottomColor: wrong,
         borderRadius: '0.2rem',
-        bgcolor: 'error.main',
+        bgcolor: wrong,
       };
       if (world.testProp(i)) {
-        sx.bgcolor = 'success.main';
+        sx.bgcolor = correct;
       }
       if (world.testDiEvi(i)) {
-        sx.borderTopColor = 'success.main'; 
+        sx.borderTopColor = correct; 
       } 
       if (world.testReEvi(i)) {
-        sx.borderBottomColor = 'success.main';
+        sx.borderBottomColor = correct;
       }
       worldOutput.push(
         <Box sx={sx} 
@@ -327,10 +329,10 @@ class Updates extends React.Component {
     //console.log(Parser);
     var op = null;
     try {
-      console.log("parsing: ", text);
+      //console.log("parsing: ", text);
       op = Parser.parse(text);
     } catch (e) {
-      console.log("syntax error", e);
+      //console.log("syntax error", e);
     }
     return op;
   }
@@ -377,7 +379,7 @@ class DLMEworld {
   }
 
   test(state, prop) {
-    console.log("test:", state, prop);
+    //console.log("test:", state, prop);
     if (!isNaN(prop)) {
       if (prop >= this.counter) {
         throw new Error("prop id exceeds prop size");
@@ -494,7 +496,7 @@ class TDLME extends React.Component {
   }
 
   containPref(allPrefs, pref1) {
-    console.log("containPref", allPrefs, pref1);
+    //console.log("containPref", allPrefs, pref1);
     for (const pref2 of allPrefs) {
       if (this.equalWorldSet(pref1.worlds1, pref2.worlds1) && this.equalWorldSet(pref1.worlds2, pref2.worlds2)) {
         return true;
@@ -556,7 +558,7 @@ class TDLME extends React.Component {
   }
 
   union(a, b) {
-    console.log("union", a, b);
+    //console.log("union", a, b);
     const rtn = a.slice();
     for (const pref of b) {
       if (!this.containPref(a, pref)) {
@@ -591,14 +593,14 @@ class TDLME extends React.Component {
   }
 
   reportEviWorlds(worlds, prop) {
-    console.log("reportEviWorlds", worlds, prop);
+    //console.log("reportEviWorlds", worlds, prop);
     const rtn = [];
     for (const world of worlds) {
       if (world.testReEvi(prop)) {
         rtn.push(world);
       }
     }
-    console.log("reportEviWorlds", rtn);
+    //console.log("reportEviWorlds", rtn);
     return rtn;
   }
 
@@ -617,7 +619,7 @@ class TDLME extends React.Component {
   }
 
   reportEvidence(prefs, prop) {
-    console.log("reportEvidence", prefs, prop);
+    //console.log("reportEvidence", prefs, prop);
     const rtn = [];
     for (const pref of prefs) {
       const worlds1 = this.reportEviWorlds(pref.worlds1, prop);
@@ -628,15 +630,15 @@ class TDLME extends React.Component {
         rtn.push(newPref);
       }
     }
-    console.log("reportEvidence", rtn);
+    //console.log("reportEvidence", rtn);
     return rtn;
   }
 
   addProp(text) {
-    console.log("adding a new proposition: " + text, this.state);
+    //console.log("adding a new proposition: " + text, this.state);
     const props = this.state.props.slice();
     props.push(new DLMEprop(this.state.propCounter, text));
-    console.log(props, props.length);
+    //console.log(props, props.length);
     const allworlds = [];
     for (let i = 0; i < (1 << props.length); ++i) {
       for (let j = 0; j < (1 << props.length); ++j) {
@@ -645,7 +647,7 @@ class TDLME extends React.Component {
         }
       }
     }
-    console.log(allworlds);
+    //console.log(allworlds);
 
     this.setState({
       propCounter: this.state.propCounter + 1, 
@@ -656,7 +658,7 @@ class TDLME extends React.Component {
   }
 
   update(cop) {
-    console.log("update", cop);
+    //console.log("update", cop);
     if (this.state.propCounter <= 0) {
       throw new Error("there is no proposition");
     }
@@ -706,7 +708,7 @@ class TDLME extends React.Component {
   }
 
   render() {
-    console.log(this.state);
+    //console.log(this.state);
     const title = 'A toy implementation of DLME'
     return (
         <Stack className='TDLME' sx={{

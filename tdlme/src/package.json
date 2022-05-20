@@ -3,5 +3,8 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
+  },
+  "dependencies": {
+    "react-helmet": "^6.1.0"
   }
 }
