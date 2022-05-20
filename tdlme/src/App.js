@@ -657,13 +657,10 @@ class TDLME extends React.Component {
     });
   }
 
-  update(cop) {
+  r_update(state, cop) {
     //console.log("update", cop);
-    if (this.state.propCounter <= 0) {
-      throw new Error("there is no proposition");
-    }
     if (cop instanceof DLMEpop) {
-      const state = this.state.state;
+      // const state = this.state.state;
       var prefs = [];
       var  drefs = [];
       var speaker = state.speaker;
@@ -698,13 +695,23 @@ class TDLME extends React.Component {
       const new_cR = this.getAllWorlds(prefs);
       drefs = [cop.prop].concat(state.drefs.slice());//.concat([new_cR]);
 
-      this.setState({
-        state: new DLMEstate(prefs, drefs, speaker),
-      });
+      return new DLMEstate(prefs, drefs, speaker);
     } else {
-      this.update(cop.op1);
-      this.update(cop.op2);
+      const state2 = this.r_update(state, cop.op1);
+      return this.r_update(state2, cop.op2);
     }
+
+  }
+
+  update(cop) {
+    if (this.state.propCounter <= 0) {
+      throw new Error("there is no proposition");
+    }
+    const newState = this.r_update(this.state.state, cop);
+    this.setState({
+      state: newState,
+    });
+
   }
 
   render() {
