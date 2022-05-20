@@ -14,14 +14,14 @@ cop
 op
     = '!' { return 0; }
     / '?' { return 1; }
+    / '+d' { return 3; }
+    / '+r' { return 4; }
     / '+' { return 2; }
-    / '+_d' { return 3; }
-    / '+_r' { return 4; }
 
 cprop
     = _ '(' left:cprop '&' right:cprop ')' _ { return new DLMEbiprop(left, right); }
     / _ '~' p:cprop _ { return new DLMEnegprop(p); } 
-    / _ /*'p_' */digits:[0-9]+ _ { return parseInt(digits.join(''), 10); }
+    / _ /*'p_' */digits:[0-9]+ _ { return parseInt(digits.join(''), 10)-1; }
     / _ '(' x: cprop ')' _ {return x;}
 
 _

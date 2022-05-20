@@ -4,14 +4,51 @@ import React from 'react';
 import * as Parser from './opgrammar';
 import { toHaveAccessibleDescription } from '@testing-library/jest-dom/dist/matchers';
 
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import ReactDOM from 'react-dom';
+import {  
+  ListItemText, 
+  Button, 
+  Input as MInput, 
+  Box, 
+  Divider, 
+  ListItem, 
+  ListItemAvatar, 
+  Avatar,
+  List,
+  TextField,
+  Grid,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { Container, createTheme, spacing } from '@mui/system';
+import { ThemeProvider } from '@emotion/react';
+import { ListTwoTone } from '@mui/icons-material';
+
 class Prop extends React.Component {
   render() {
     console.log(this.props);
     return (
-      <button key={this.props.value.id} className='prop' onClick={() => {console.log(this.props.value.text);}}>
+      <ListItem sx={{
+        bgcolor: "#2EAFA0",
+      }}>
+        <ListItemAvatar>
+          <Avatar sx={{
+            bgcolor: "#e9c46a",
+            color: "black",
+          }}>
+            {this.props.value.id + 1}
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={this.props.value.text} />
+      </ListItem>
+      /*<button key={this.props.value.id} className='prop' onClick={() => {console.log(this.props.value.text);}}>
         {this.props.value.id}
         {this.props.value.text}
-      </button>
+      </button>*/
     )
   }
 }
@@ -29,6 +66,7 @@ class PropForm extends React.Component {
   }
 
   onSubmit(event) {
+    console.log("prop form", this.propName.current.value);
     event.preventDefault();
     var newItemValue = this.propName.current.value;
 
@@ -40,10 +78,21 @@ class PropForm extends React.Component {
 
   render() {
     return (
-      <form ref={this.form} onSubmit={this.onSubmit} className="form-inline">
-        <input type="text" ref={this.propName} className='form-control' placeholder='add a new proposition...' />
-        <button type='submit' className='btn btn-default'>Add</button>
+      <Box sx={{
+        width: "100%"
+      }}>
+      <form onSubmit={this.onSubmit} className="form-inline">
+        <TextField sx={{
+          width: "70%"
+        }}
+        type="text" inputRef={this.propName} className='form-control' placeholder='add a new proposition...' />
+        <Button sx={{
+          margin: 1,
+          
+        }}
+         variant="contained" type='submit' className='btn btn-default'>Add</Button>
       </form>
+      </Box>
     );
   }
 }
@@ -65,13 +114,19 @@ class Props extends React.Component {
     console.log(propsInfo);
 
     return (
-      <div>
-        <div className='title'>{title}</div>
-        <div className='props-info'>
+      <Box sx={{ width: '100%', maxWidth: 360, bgcolor: '#2a9d8f',
+        borderRadius: 1, 
+        color: 'black',
+      }}>
+        <Box className='title' margin={1}>{title}</Box>
+        <Divider />
+        <List className='props-info'>
           {propsInfo}
-          <PropForm addProp={this.props.addProp}/>
-        </div>
-      </div>
+          <ListItem>
+            <PropForm addProp={this.props.addProp}/>
+          </ListItem>
+        </List>
+      </Box>
     );
   }
 }
@@ -107,13 +162,125 @@ class Worlds extends React.Component {
   }
 }
 
+function Item(props) {
+  const { sx, ...other } = props;
+  return (
+    <Box
+      sx={{
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+        color: (theme) => (theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800'),
+        border: '1px solid',
+        borderColor: (theme) =>
+          theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
+        p: 1,
+        borderRadius: 2,
+        fontSize: '0.875rem',
+        fontWeight: '700',
+        ...sx,
+      }}
+      {...other}
+    />
+  );
+}
+
 class State extends React.Component {
+  renderWorld(world) {
+    const worldOutput = [];
+    for (let i = 0; i < world.counter; ++i) {
+      const sx = {
+        width: '1rem',
+        borderTop: '0.4rem solid',
+        borderBottom: '0.4rem solid',
+        borderTopColor: 'error.main',
+        borderBottomColor: 'error.main',
+        borderRadius: '0.2rem',
+        bgcolor: 'error.main',
+      };
+      if (world.testProp(i)) {
+        sx.bgcolor = 'success.main';
+      }
+      if (world.testDiEvi(i)) {
+        sx.borderTopColor = 'success.main'; 
+      } 
+      if (world.testReEvi(i)) {
+        sx.borderBottomColor = 'success.main';
+      }
+      worldOutput.push(
+        <Box sx={sx} 
+        textAlign="center" >
+          {i+1}
+        </Box>
+      )
+    }
+    return (
+      <Stack  direction="row" padding={1} wrap="nowrap" sx={{ 
+        overflow: "auto",
+      }}>
+        {worldOutput}
+      </Stack>
+    )
+  }
+
+  renderWorlds(worlds) {
+    const worldsOutput = [];
+    for (const world of worlds) {
+      const worldOutput = this.renderWorld(world);
+      worldsOutput.push(worldOutput);
+    }
+    if (worldsOutput.length <= 0) {
+      worldsOutput.push(<Box padding={1}>
+        empty set
+        </Box>);
+    }
+    return (
+      <Grid container>
+        {worldsOutput}
+      </Grid>
+    )
+  }
+
+  renderPref(pref) {
+    const worlds1 = pref.worlds1;
+    const worlds2 = pref.worlds2;
+    return (
+      <Box sx={{
+        bgcolor: "#2EAFA0",
+        border: "1px dashed",
+      }} margin={1}>
+        {this.renderWorlds(worlds1)}
+        <Divider sx={{
+        }}/>
+        {this.renderWorlds(worlds2)}
+        <Divider />
+      </Box>
+    )
+  }
 
   render() {
+    const title = "State";
+    const prefs = this.props.state.prefs;
+    const prefsOutput = [];
+    for (const pref of prefs) {
+      const prefOutput = this.renderPref(pref);
+      prefsOutput.push(prefOutput);
+    }
     // to print current state (R, d, i)
     return (
-      <div>
-      </div>
+      <Box sx={{ width: '100%', maxWidth: 360, bgcolor: '#2a9d8f',
+        borderRadius: 1, 
+        color: 'black',
+      }}>
+      <Box className='title' margin={1}>{title}</Box>
+      <Divider />
+        <Box>
+          <Box marginLeft={2} marginTop={2}>
+            Preferences
+          </Box>
+          <List >
+            {prefsOutput}
+          </List>
+        </Box>
+      </Box>
     );
   }
 }
@@ -180,40 +347,67 @@ class Updates extends React.Component {
 
   render() {
     return (
-      <div className='updates-input'>
-        <form ref={this.form} onSubmit={this.onSubmit} className="form-inline">
-          <input type="text" ref={this.optext} className='form-control' placeholder='input an update...' />
-          <button type='submit' className='btn btn-default'>Add</button>
+    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: '#2a9d8f',
+      borderRadius: 1,
+      color: 'black',
+      }}>
+        <form onSubmit={this.onSubmit} className="form-inline">
+          <TextField sx={{
+            width:"60%",
+            margin:2,
+          }}
+          bgcolor="#264653" type="text" inputRef={this.optext} className='form-control' placeholder='input an update...' />
+          <Button sx={{
+            marginTop:3,
+
+          }}
+          variant="contained" type='submit' className='btn btn-default'>Update</Button>
         </form>
-      </div>
+      </Box>
     );
   }
 }
 
 class DLMEworld {
-  constructor(state, counter) {
+  constructor(state, devstate, revstate, counter) {
     this.state = state;
+    this.devstate = devstate;
+    this.revstate = revstate;
     this.counter = counter;
   }
 
-  testProp(prop) {
-    console.log("testProp:", this, prop);
+  test(state, prop) {
+    console.log("test:", state, prop);
     if (!isNaN(prop)) {
       if (prop >= this.counter) {
         throw new Error("prop id exceeds prop size");
       }
-      return ((this.state >> prop) & 1) == 1;
+      return ((state >> prop) & 1) == 1;
     } else if (prop instanceof DLMEbiprop) {
-      return this.testProp(prop.prop1) && this.testProp(prop.prop2);
+      return this.test(state, prop.prop1) && this.test(state, prop.prop2);
     } else if (prop instanceof DLMEnegprop) {
-      return !this.testProp(prop.prop);
+      return !this.test(state, prop.prop);
     } else {
       throw new Error("prop type not found");
     }
   }
 
+  testProp(prop) {
+    return this.test(this.state, prop);
+  }
+
+  testDiEvi(prop) {
+    return this.test(this.devstate, prop);
+  }
+
+  testReEvi(prop) {
+    return this.test(this.revstate, prop);
+  }
+
   equal(other) {
-    return this.state == other.state;
+    return this.state == other.state && 
+      this.devstate == other.devstate &&
+      this.revstate == other.revstate;
   }
 }
 
@@ -276,7 +470,7 @@ class TDLME extends React.Component {
       propCounter: 0,
       props: [],
       worlds: [],
-      state: new DLMEstate(),
+      state: new DLMEstate([], [], null),
     }
   }
 
@@ -349,9 +543,13 @@ class TDLME extends React.Component {
   getAllTrueWorlds(p) {
     const rtn = [];
     for (let i = 0; i < (1 << this.state.props.length); ++i) {
-      const world = new DLMEworld(i, this.state.props.length);
-      if (world.testProp(p)) {
-        rtn.push(world);
+      for (let j = 0; j < (1 << this.state.props.length); ++j) {
+        for (let k = 0; k < (1 << this.state.props.length); ++k) {
+          const world = new DLMEworld(i, j, k, this.state.props.length);
+          if (world.testProp(p)) {
+            rtn.push(world);
+          }
+        }
       }
     }
     return rtn;
@@ -382,6 +580,58 @@ class TDLME extends React.Component {
     return rtn;
   }
 
+  directEviWorlds(worlds, prop) {
+    const rtn = [];
+    for (const world of worlds) {
+      if (world.testDiEvi(prop)) {
+        rtn.push(world);
+      }
+    }
+    return rtn;
+  }
+
+  reportEviWorlds(worlds, prop) {
+    console.log("reportEviWorlds", worlds, prop);
+    const rtn = [];
+    for (const world of worlds) {
+      if (world.testReEvi(prop)) {
+        rtn.push(world);
+      }
+    }
+    console.log("reportEviWorlds", rtn);
+    return rtn;
+  }
+
+  directEvidence(prefs, prop) {
+    const rtn = [];
+    for (const pref of prefs) {
+      const worlds1 = this.directEviWorlds(pref.worlds1, prop);
+      if (worlds1.length <= 0) continue;
+      const worlds2 = this.directEviWorlds(pref.worlds2, prop);
+      const newPref = new DLMEpref(worlds1, worlds2);
+      if (!this.containPref(rtn, newPref)) {
+        rtn.push(newPref);
+      }
+    }
+    return rtn;
+  }
+
+  reportEvidence(prefs, prop) {
+    console.log("reportEvidence", prefs, prop);
+    const rtn = [];
+    for (const pref of prefs) {
+      const worlds1 = this.reportEviWorlds(pref.worlds1, prop);
+      if (worlds1.length <= 0) continue;
+      const worlds2 = this.reportEviWorlds(pref.worlds2, prop);
+      const newPref = new DLMEpref(worlds1, worlds2);
+      if (!this.containPref(rtn, newPref)) {
+        rtn.push(newPref);
+      }
+    }
+    console.log("reportEvidence", rtn);
+    return rtn;
+  }
+
   addProp(text) {
     console.log("adding a new proposition: " + text, this.state);
     const props = this.state.props.slice();
@@ -389,7 +639,11 @@ class TDLME extends React.Component {
     console.log(props, props.length);
     const allworlds = [];
     for (let i = 0; i < (1 << props.length); ++i) {
-      allworlds.push(new DLMEworld(i, props.length));
+      for (let j = 0; j < (1 << props.length); ++j) {
+        for (let k = 0; k < (1 << props.length); ++k) {
+          allworlds.push(new DLMEworld(i, j, k, props.length));
+        }
+      }
     }
     console.log(allworlds);
 
@@ -416,22 +670,31 @@ class TDLME extends React.Component {
         const cR_p = this.trueWorlds(cR, cop.prop);
         const cR_np = this.minusWorlds(cR, cR_p);
         if (cop.op == 0) {
+          // imperative
           prefs = this.union(state.prefs, [new DLMEpref(cR_p, cR_np)]);
         } else {
+          // interrogative
           prefs = this.union(state.prefs, [new DLMEpref(cR_p, []), new DLMEpref(cR_np, [])]);
         }
       } else if (cop.op == 2) {
+        // declarative
         const prefs_p = this.truePrefs(state.prefs, cop.prop);
         prefs = prefs_p;
       } else if (cop.op == 3) {
-
+        // declarative with direct evidence
+        const prefs_p = this.truePrefs(state.prefs, cop.prop);
+        const prefs_p_d = this.directEvidence(prefs_p, cop.prop);
+        prefs = prefs_p_d;
       } else if (cop.op == 4) {
+        // declarative with reported evidence
+        const prefs_p_r = this.reportEvidence(state.prefs, cop.prop);
+        prefs = prefs_p_r;
 
       } else {
         throw Error("op type not found");
       }
       const new_cR = this.getAllWorlds(prefs);
-      drefs = [this.getAllTrueWorlds(cop.prop)].concat(state.drefs.slice()).concat([new_cR]);
+      drefs = [cop.prop].concat(state.drefs.slice());//.concat([new_cR]);
 
       this.setState({
         state: new DLMEstate(prefs, drefs, speaker),
@@ -446,26 +709,46 @@ class TDLME extends React.Component {
     console.log(this.state);
     const title = 'A toy implementation of DLME'
     return (
-      <div>
-        <div className='title'>{title}</div>
-        <div className='TDLME-props'>
+        <Stack className='TDLME' sx={{
+          bgcolor: '#264653',
+          color: 'white',
+          width: 400,
+          boxShadow: 4,
+          borderRadius: 4,
+          p: 1,
+          minWidth: 300,
+        }}
+        alignItems="center"
+        justifyContent="center"
+        spacing={2}
+        >
+          <Box sx={{ 
+              //bgcolor: '#58A4B0',
+              borderRadius: 2,
+              //p:1,
+            }} 
+            alignItems="center"
+            justifyContent="center"
+            display="flex"
+            height="3rem"
+            
+            className='title'>
+              <Typography variant='h5'>
+                {title}
+              </Typography>
+          </Box>
           <Props
             props={this.state.props}
             addProp={(text) => this.addProp(text)}
           />
-        </div>
-        <div className='TDLME-state'>
           <State 
             state={this.state.state}
           />
-        </div>
-        <div className='TDLME-updates'>
           <Updates 
             props={this.state.props}
             update={(cop) => this.update(cop)}
           />
-        </div>
-      </div>
+        </Stack>
     );
   }
 }
@@ -473,11 +756,21 @@ class TDLME extends React.Component {
 class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <div className='TDLME'>
-          <TDLME />
-        </div>
-      </div>
+
+      <Grid className="App"
+      alignItems="center"
+      justifyContent="center"
+      container
+      spacing={2}
+      sx={{p:5}}
+      >
+
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        />
+        <TDLME />
+      </Grid>
     );
   }
 }
